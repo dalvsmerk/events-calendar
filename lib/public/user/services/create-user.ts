@@ -1,12 +1,9 @@
-export interface CreateUserDto {
-    email: string;
-    password: string;
-    full_name?: string;
-}
+import { CreateUserDto, ReadUserDto } from '../dto';
 
-export default async (userDto: CreateUserDto) => {
+export default async (userDto: CreateUserDto): Promise<ReadUserDto | null> => {
     return {
-        ...userDto,
-        id: 1,
+        id: '2323423423423423',
+        email: userDto.email,
+        full_name: userDto.full_name,
     };
 };

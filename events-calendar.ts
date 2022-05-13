@@ -1,26 +1,28 @@
-import Koa, { Context } from 'koa';
-import { config } from './config'; 
-import { init } from './lib/init';
+import Hapi from '@hapi/hapi';
+import { api } from './api';
+import { config } from './config';
 
-const app = new Koa();
+const init = async () => {
+    const server = Hapi.server({
+        port: config.server.port,
+        host: 'localhost',
+    });
 
-init(app);
+    await server.register(api, {
+        routes: {
+            prefix: '/api',
+        },
+    });
 
-const server = app.listen(config.server.port);
+    await server.start();
 
-app.on('error', (err: Error) => {
+    console.log('Server running on ', server.info.uri);
+};
+
+process.on('unhandledRejection', (err) => {
     console.error(err);
 
     process.exit(1);
 });
 
-const shutdown = () => {
-    console.log('\nShutting down server');
-    server.close();
-    process.exit(0);
-}
-
-process.once('SIGTERM', shutdown);
-process.once('SIGINT', shutdown);
-
-console.info('Server listening to ' + config.server.port);
+init();

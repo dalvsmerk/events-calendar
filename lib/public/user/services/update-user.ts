@@ -1,9 +1,5 @@
-import { CreateUserDto } from './create-user';
+import { ReadUserDto, UpdateUserDto } from '../dto';
 
-interface UpdateUserDto extends CreateUserDto {
-    id: string;
-}
-
-export default async (userDto: UpdateUserDto) => {
+export default async (id: string, userDto: UpdateUserDto): Promise<ReadUserDto> => {
     return userDto;
 };
