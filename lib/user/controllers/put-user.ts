@@ -1,3 +1,4 @@
+import Joi from 'joi';
 import { UserSchema } from '../schemas/user';
 import updateUser from '../services/update-user';
 
@@ -7,7 +8,7 @@ export default {
     validate: {
         type: 'json',
         params: {
-            id: Joi.string().uuid(),
+            id: Joi.number().required(),
         },
         body: UserSchema,
     },
