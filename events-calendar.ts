@@ -1,12 +1,10 @@
 import Koa, { Context } from 'koa';
 import { config } from './config'; 
+import { init } from './lib/init';
 
 const app = new Koa();
 
-app.use(async (ctx: Context) => {
-    ctx.body = '{ "success": true }';
-    ctx.set('Content-Type', 'application/json');
-});
+init(app);
 
 const server = app.listen(config.server.port);
 
