@@ -1,7 +1,13 @@
 import { FindUserDto, ReadUserDto } from '../dto';
 import { findUserById } from '../repository/user';
+import { protect } from '../util';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default async (userDto: FindUserDto): Promise<ReadUserDto> => {
-    return findUserById(userDto.id);
+    const user = await findUserById(userDto.id);
+
+    if (user) {
+        return protect(user);
+    }
+
+    return user;
 }

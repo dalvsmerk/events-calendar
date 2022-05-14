@@ -5,8 +5,10 @@ export interface CreateUserDto {
     full_name?: string;
 }
 
-export interface UpdateUserDto extends CreateUserDto {
-    id: string;
+export interface UpdateUserDto {
+    email?: string;
+    password?: string;
+    full_name?: string;
 }
 
 export interface FindUserDto {
