@@ -4,6 +4,7 @@ import { authenticate, UserNotFoundError, UserPasswordIncorrectError } from './a
 
 export default [
     {
+        visibility: 'public',
         method: 'post',
         path: '/token',
         handler: async (ctx) => {
@@ -16,7 +17,7 @@ export default [
                         access_token: await authenticate(email, password),
                     },
                 });
-            } 
+            }
             catch (error) {
                 if (error instanceof UserNotFoundError) {
                     ctx.error(404, error);

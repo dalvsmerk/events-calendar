@@ -7,6 +7,7 @@ interface RequestValidation {
 }
 
 interface Controller {
+    visibility: 'public' | 'private' | 'protected';
     method: 'get' | 'post' | 'put' | 'patch' | 'delete';
     path: string;
     handler: <R>(ctx: Context, next: Next) => R;

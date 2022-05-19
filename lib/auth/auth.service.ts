@@ -47,3 +47,13 @@ export const authenticate = async (email: string, password: string) => {
 
     return generateAccessToken(readUser);
 };
+
+export const authorise = async (accessToken: string) => {
+    try {
+        jwt.verify(accessToken, config.secret.key);
+        return true;
+    }
+    catch (error) {
+        return false;
+    }
+};

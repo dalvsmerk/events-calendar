@@ -2,9 +2,9 @@ import { ValidationError } from 'joi';
 import { isEmpty } from 'lodash';
 import { RequestValidation } from '../types';
 
-export default (validation: RequestValidation) => async (ctx, next) => {
+export default (validation?: RequestValidation) => async (ctx, next) => {
     try {
-        if (validation.params) {
+        if (validation?.params) {
             const result = validation.params.validate(ctx.request.params);
 
             if (!isEmpty(result.error)) {
@@ -12,7 +12,7 @@ export default (validation: RequestValidation) => async (ctx, next) => {
             }
         }
 
-        if (validation.payload) {
+        if (validation?.payload) {
             const result = validation.payload.validate(ctx.request.body);
 
             if (!isEmpty(result.error)) {
