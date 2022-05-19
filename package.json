@@ -5,6 +5,7 @@
   "main": "events-calendar.ts",
   "scripts": {
     "start": "ts-node events-calendar.ts",
+    "watch": "nodemon --ext .ts --exec 'ts-node events-calendar'",
     "lint": "eslint --ext .ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -24,6 +25,9 @@
     "@hapi/hapi": "^20.2.2",
     "joi": "^17.6.0",
     "knex": "^2.0.0",
+    "koa": "^2.13.4",
+    "koa-bodyparser": "^4.3.0",
+    "koa-router": "^10.1.1",
     "lodash": "^4.17.21",
     "sqlite3": "^5.0.8",
     "uuid": "^8.3.2"
@@ -33,6 +37,9 @@
     "@types/hapi__hapi": "^20.0.10",
     "@types/joi": "^17.2.3",
     "@types/knex": "^0.16.1",
+    "@types/koa": "^2.13.4",
+    "@types/koa-bodyparser": "^4.3.7",
+    "@types/koa-router": "^7.4.4",
     "@types/lodash": "^4.14.182",
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.23.0",
