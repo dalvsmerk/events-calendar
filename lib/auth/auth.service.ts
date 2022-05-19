@@ -39,6 +39,10 @@ export const generateAccessToken = (user: ReadUserDto) => {
 };
 
 export const authenticate = async (email: string, password: string) => {
+    /**
+     * TODO: Expire previous token when generate new
+     * NOTE: Store access token in cache and update using refresh token
+     */
     const user = await tryFindUser(email);
 
     await tryVerifyPassword(user, password);
