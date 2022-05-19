@@ -39,7 +39,7 @@ export class InternalError extends Error {
     }
 }
 
-const protectUser = protect<ReadUserDto>(['password']);
+export const protectUser = protect<ReadUserDto>(['password']);
 
 export const createUser = async (dto: CreateUserDto): Promise<ReadUserDto> => {
     const userToInsert: User = {

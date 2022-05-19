@@ -1,4 +1,5 @@
 import Router from 'koa-router';
+import authController from './auth/auth.controller';
 import sugar from './middlewares/sugar';
 import validateRequest from './middlewares/validate-request';
 import usersController from './users/users.controller';
@@ -13,6 +14,7 @@ export const registerRoutes = () => {
     const router = new Router().prefix('/api/v1');
 
     register(router, usersController);
+    register(router, authController);
 
     return router;
 };

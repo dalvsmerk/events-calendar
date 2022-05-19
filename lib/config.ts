@@ -11,6 +11,7 @@ export const config = {
         useNullAsDefault: true,
     },
     secret: {
+        key: 'PUTIN HUILO',
         saltRounds: 4,
     },
 };

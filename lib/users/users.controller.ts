@@ -5,7 +5,7 @@ import { createUser, ReadUserDto, UserEmailExistsError } from './users.service';
 export default [
     {
         method: 'post',
-        path: '/users',
+        path: '/user',
         handler: async (ctx) => {
             try {
                 const user: ReadUserDto = await createUser(ctx.request.body);
@@ -14,7 +14,8 @@ export default [
                     success: true,
                     data: user,
                 });
-            } catch (error) {
+            } 
+            catch (error) {
                 if (error instanceof UserEmailExistsError) {
                     ctx.error(400, error);
                 }
@@ -30,7 +31,7 @@ export default [
                     email: Joi.string().email().min(3).required(),
                     password: Joi.string().min(6).required(),
                 }),
-            }
-        }
+            },
+        },
     },
 ] as Controller[];

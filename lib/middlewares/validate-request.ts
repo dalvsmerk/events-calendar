@@ -1,6 +1,5 @@
 import { ValidationError } from 'joi';
 import { isEmpty } from 'lodash';
-import logger from '../clients/logger';
 import { RequestValidation } from '../types';
 
 export default (validation: RequestValidation) => async (ctx, next) => {
@@ -23,8 +22,6 @@ export default (validation: RequestValidation) => async (ctx, next) => {
 
         await next();
     } catch (error) {
-        logger.error(error);
-
         if (error instanceof ValidationError) {
             ctx.status = 400;
             ctx.body = {
