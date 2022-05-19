@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { getCache } from '../clients/cache';
 import { config } from '../config';
 import { findUserByEmail } from '../users/users.repository';
 import { protectUser, ReadUserDto, User } from '../users/users.service';
@@ -38,24 +39,30 @@ export const generateAccessToken = (user: ReadUserDto) => {
     return jwt.sign({ data: user }, config.secret.key);
 };
 
+const makeAccessTokenCacheKey = (user: ReadUserDto) => `${user.id}:access-token`;
+
 export const authenticate = async (email: string, password: string) => {
     /**
-     * TODO: Expire previous token when generate new
-     * NOTE: Store access token in cache and update using refresh token
+     * TODO: Update access token using refresh tokens
      */
     const user = await tryFindUser(email);
 
     await tryVerifyPassword(user, password);
 
-    const readUser = protectUser(user);
+    const readUser    = protectUser(user);
+    const accessToken = generateAccessToken(readUser);
 
-    return generateAccessToken(readUser);
+    getCache().set(makeAccessTokenCacheKey(readUser), accessToken, config.auth.access_token.ttl);
+
+    return accessToken;
 };
 
 export const authorise = async (accessToken: string) => {
     try {
-        jwt.verify(accessToken, config.secret.key);
-        return true;
+        const payload = jwt.verify(accessToken, config.secret.key) as { data: ReadUserDto };
+        const accessTokenKey = makeAccessTokenCacheKey(payload.data);
+
+        return getCache().exists(accessTokenKey);
     }
     catch (error) {
         return false;
