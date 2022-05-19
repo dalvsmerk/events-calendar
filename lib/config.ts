@@ -10,4 +10,7 @@ export const config = {
         }),
         useNullAsDefault: true,
     },
+    secret: {
+        saltRounds: 4,
+    },
 };

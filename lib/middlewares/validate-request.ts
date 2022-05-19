@@ -3,7 +3,7 @@ import { isEmpty } from 'lodash';
 import logger from '../clients/logger';
 import { RequestValidation } from '../types';
 
-export const validateRequest = (validation: RequestValidation) => async (ctx, next) => {
+export default (validation: RequestValidation) => async (ctx, next) => {
     try {
         if (validation.params) {
             const result = validation.params.validate(ctx.request.params);

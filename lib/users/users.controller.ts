@@ -1,20 +1,27 @@
 import Joi from 'joi';
-import { v4 } from 'uuid';
 import { Controller } from '../types';
+import { createUser, ReadUserDto, UserEmailExistsError } from './users.service';
 
 export default [
     {
         method: 'post',
         path: '/users',
-        handler: (ctx) => {
-            ctx.status = 201;
-            ctx.body = {
-                success: true,
-                data: {
-                    id: v4(),
-                    ...ctx.request.body,
-                },
-            };
+        handler: async (ctx) => {
+            try {
+                const user: ReadUserDto = await createUser(ctx.request.body);
+                
+                ctx.send(201, {
+                    success: true,
+                    data: user,
+                });
+            } catch (error) {
+                if (error instanceof UserEmailExistsError) {
+                    ctx.error(400, error);
+                }
+                else {
+                    ctx.error(500, error);
+                }
+            }
         },
         options: {
             description: 'Register new user',

@@ -1,10 +1,11 @@
 import Router from 'koa-router';
-import { validateRequest } from './middlewares/validation';
+import sugar from './middlewares/sugar';
+import validateRequest from './middlewares/validate-request';
 import usersController from './users/users.controller';
 
 const register = (router, controller) => {
     controller.forEach(ctrl => {
-        router[ctrl.method](ctrl.path, validateRequest(ctrl.options.validation), ctrl.handler);
+        router[ctrl.method](ctrl.path, validateRequest(ctrl.options.validation), sugar, ctrl.handler);
     });
 };
 
