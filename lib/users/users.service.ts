@@ -1,8 +1,10 @@
 import bcrypt from 'bcrypt';
 import { v4 } from 'uuid';
+import { insertCalendar } from '../calendars/calendars.repository';
+import { CalendarCreationDTO, CalendarReadDTO, createCalendar } from '../calendars/calendars.service';
 import logger from '../clients/logger';
 import { config } from '../config';
-import { protect } from '../utils';
+import { ENTITY_CONSTRAINT, InternalError, protect, SqliteError, tryHandleSQLError } from '../utils';
 import { insertUser } from './users.repository';
 
 export interface CreateUserDto {
@@ -21,25 +23,23 @@ export interface User {
     password: string;
 }
 
-interface SqliteError {
-    code: string;
-}
-
-const ENTITY_CONSTRAINT = 'SQLITE_CONSTRAINT';
-
 export class UserEmailExistsError extends Error {
     constructor(readonly email: string) {
         super(`User email ${email} already exists`);
     }
 }
 
-export class InternalError extends Error {
-    constructor(readonly message: string) {
-        super(message);
-    }
-}
-
 export const protectUser = protect<ReadUserDto>(['password']);
+
+export const createDefaultUserCalendar = async (user: User): Promise<CalendarReadDTO> => {
+    const defaultCalendar: CalendarCreationDTO = {
+        name: `${user.email} calendar`,
+        owner_id: user.id,
+        color: '#c2e1c2',
+    };
+    
+    return await createCalendar(defaultCalendar);
+};
 
 export const createUser = async (dto: CreateUserDto): Promise<ReadUserDto> => {
     const userToInsert: User = {
@@ -50,12 +50,14 @@ export const createUser = async (dto: CreateUserDto): Promise<ReadUserDto> => {
 
     try {
         const user: User = await insertUser(userToInsert);
+
+        await createDefaultUserCalendar(user);
     
         return protectUser(user);
     } catch (error) {
-        if ((error as SqliteError).code === ENTITY_CONSTRAINT) {
-            throw new UserEmailExistsError(dto.email);
-        }
+        tryHandleSQLError(error, () => {
+            throw new UserEmailExistsError(dto.email)
+        });
 
         logger.error(error);
 

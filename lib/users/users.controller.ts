@@ -15,7 +15,7 @@ export default [
                     success: true,
                     data: user,
                 });
-            } 
+            }
             catch (error) {
                 if (error instanceof UserEmailExistsError) {
                     ctx.error(400, error);
