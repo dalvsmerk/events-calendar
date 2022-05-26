@@ -56,10 +56,17 @@ Register new user.
 | email     | string | true     |
 | password  | string | true     |
 
-Example:
+Request:
 ```
 {
     "email": "stepan.bandera@peremoga.ua",
     "password": "putinposhelnahui666"
+}
+```
+Response:
+```
+{
+    "id": "d739d9c0-a6a2-4096-8fb6-e113f2866355",
+    "email": "stepan.bandera@peremoga.ua"
 }
 ```
