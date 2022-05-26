@@ -1,28 +1,14 @@
-import Hapi from '@hapi/hapi';
-import { api } from './api';
-import { config } from './config';
+import logger from './lib/clients/logger';
+import { initialize } from './lib/initialize';
 
-const init = async () => {
-    const server = Hapi.server({
-        port: config.server.port,
-        host: 'localhost',
+process.on('unhandledRejection', (err: Error) => {
+    logger.error({
+        ...err,
+        message: err.message,
+        stack: err.stack,
     });
-
-    await server.register(api, {
-        routes: {
-            prefix: '/api',
-        },
-    });
-
-    await server.start();
-
-    console.log('Server running on ', server.info.uri);
-};
-
-process.on('unhandledRejection', (err) => {
-    console.error(err);
 
     process.exit(1);
 });
 
-init();
+initialize();

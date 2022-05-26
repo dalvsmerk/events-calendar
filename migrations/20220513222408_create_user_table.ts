@@ -5,12 +5,11 @@ export async function up(knex: Knex): Promise<void> {
     return knex
         .schema
         .createTable('users', (table: Knex.TableBuilder) => {
-            table.primary(['id']);
+            table.primary(['id', 'email']);
 
-            table.uuid('id').notNullable();
-            table.string('email', 254).notNullable();
+            table.uuid('id').unique().notNullable();
+            table.string('email', 254).unique().notNullable();
             table.string('password').notNullable();
-            table.string('full_name', 100);
         });
 }
 

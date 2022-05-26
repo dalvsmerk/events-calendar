@@ -10,4 +10,13 @@ export const config = {
         }),
         useNullAsDefault: true,
     },
+    secret: {
+        key: 'PUTIN HUILO',
+        saltRounds: 4,
+    },
+    auth: {
+        access_token: {
+            ttl: 1000 * 60 * 60, // 1 hour
+        },
+    },
 };
