@@ -4,7 +4,7 @@ import { createUser, ReadUserDto, UserEmailExistsError } from './users.service';
 
 export default [
     {
-        visibility: 'protected',
+        visibility: 'public',
         method: 'post',
         path: '/user',
         handler: async (ctx) => {

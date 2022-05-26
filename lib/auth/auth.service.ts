@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import { getCache } from '../clients/cache';
 import { config } from '../config';
 import { findUserByEmail } from '../users/users.repository';
-import { protectUser, ReadUserDto, User } from '../users/users.service';
+import { getUserByEmail, protectUser, ReadUserDto, User } from '../users/users.service';
 
 export class UserNotFoundError extends Error {
     constructor(readonly email: string) {
@@ -58,15 +58,16 @@ export const authenticate = async (email: string, password: string) => {
     return accessToken;
 };
 
-export const authorise = async (accessToken: string) => {
+export const authorise = async (accessToken: string): Promise<[boolean, ReadUserDto | null]> => {
     try {
         const payload = jwt.verify(accessToken, config.secret.key) as { data: ReadUserDto };
+        const user: ReadUserDto = await getUserByEmail(payload.data.email);
         const accessTokenKey = makeAccessTokenCacheKey(payload.data);
         const cache = await getCache();
 
-        return cache.exists(accessTokenKey);
+        return [cache.exists(accessTokenKey), user];
     }
     catch (error) {
-        return false;
+        return [false, null];
     }
 };

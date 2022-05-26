@@ -1,11 +1,11 @@
 import bcrypt from 'bcrypt';
 import { v4 } from 'uuid';
-import { insertCalendar } from '../calendars/calendars.repository';
+import { UserNotFoundError } from '../auth/auth.service';
 import { CalendarCreationDTO, CalendarReadDTO, createCalendar } from '../calendars/calendars.service';
 import logger from '../clients/logger';
 import { config } from '../config';
-import { ENTITY_CONSTRAINT, InternalError, protect, SqliteError, tryHandleSQLError } from '../utils';
-import { insertUser } from './users.repository';
+import {  InternalError, protect, SqliteError, SQLITE_CONSTRAINT, tryHandleSQLError } from '../utils';
+import { findUserByEmail, findUserById, insertUser } from './users.repository';
 
 export interface CreateUserDto {
     email: string;
@@ -55,12 +55,22 @@ export const createUser = async (dto: CreateUserDto): Promise<ReadUserDto> => {
     
         return protectUser(user);
     } catch (error) {
-        tryHandleSQLError(error, () => {
+        if ((error as SqliteError).code === SQLITE_CONSTRAINT) {
             throw new UserEmailExistsError(dto.email)
-        });
+        }
 
         logger.error(error);
 
         throw new InternalError((error as Error).message);
     }
-}
+};
+
+export const getUserByEmail = async (email: string): Promise<ReadUserDto> => {
+    const user = await findUserByEmail(email);
+
+    if (!user) {
+        throw new UserNotFoundError(email);
+    }
+
+    return user;
+};

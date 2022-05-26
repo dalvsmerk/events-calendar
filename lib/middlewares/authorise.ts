@@ -24,7 +24,9 @@ export default async (ctx: Context, next) => {
         return;
     }
 
-    const canAuthorise = await authorise(accessToken);
+    const [canAuthorise, authorisedUser] = await authorise(accessToken);
+
+    ctx.user = authorisedUser;
 
     if (!canAuthorise) {
         ctx.status = 401;

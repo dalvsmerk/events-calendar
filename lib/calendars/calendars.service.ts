@@ -1,7 +1,7 @@
 import { v4 } from 'uuid';
 import logger from '../clients/logger';
 import { InternalError } from '../utils';
-import { insertCalendar } from './calendars.repository';
+import { findCalendarsByOwnerId, insertCalendar } from './calendars.repository';
 
 export interface Calendar {
     id: string;
@@ -21,6 +21,16 @@ export const createCalendar = async (dto: CalendarCreationDTO): Promise<Calendar
         };
 
         return await insertCalendar(calendar);
+    } catch (error) {
+        logger.error(error);
+
+        throw new InternalError((error as Error).message);
+    }
+};
+
+export const getUserCalendars = async (userId: string): Promise<CalendarReadDTO[]> => {
+    try {
+        return await findCalendarsByOwnerId(userId);
     } catch (error) {
         logger.error(error);
 

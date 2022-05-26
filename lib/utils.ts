@@ -8,11 +8,11 @@ export class InternalError extends Error {
     }
 }
 
-interface SqliteError {
+export interface SqliteError {
     code: string;
 }
 
-const SQLITE_CONSTRAINT = 'SQLITE_CONSTRAINT';
+export const SQLITE_CONSTRAINT = 'SQLITE_CONSTRAINT';
 
 export const tryHandleSQLError = async (error, cb) => {
     if ((error as SqliteError).code === SQLITE_CONSTRAINT) {

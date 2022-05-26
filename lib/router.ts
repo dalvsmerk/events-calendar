@@ -1,6 +1,7 @@
 import compose from 'koa-compose';
 import Router from 'koa-router';
 import authController from './auth/auth.controller';
+import calendarsController from './calendars/calendars.controller';
 import authorise from './middlewares/authorise';
 import sugar from './middlewares/sugar';
 import validateRequest from './middlewares/validate-request';
@@ -26,6 +27,7 @@ export const registerRoutes = () => {
 
     register(router, usersController);
     register(router, authController);
+    register(router, calendarsController);
 
     return router;
 };

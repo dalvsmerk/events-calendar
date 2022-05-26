@@ -23,7 +23,36 @@ npm start
 
 ## Public endpoints
 
-### `POST /token`
+No authentication is required.
+
+### `POST /api/v1/user`
+
+Register new user.
+
+| Parameter | Type   | Required |
+| --------- | ----   | -------- |
+| email     | string | true     |
+| password  | string | true     |
+
+Request:
+```
+{
+    "email": "stepan.bandera@peremoga.ua",
+    "password": "putinposhelnahui666"
+}
+```
+Response:
+```
+{
+    "success": true,
+    "data": {
+        "id": "d739d9c0-a6a2-4096-8fb6-e113f2866355",
+        "email": "stepan.bandera@peremoga.ua"
+    }
+}
+```
+
+### `POST /api/v1/token`
 
 Obtain authentication token.
 
@@ -43,30 +72,32 @@ Request:
 Response:
 ```
 {
-    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+    "success": true,
+    "data": {
+        "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+    }
 }
 ```
 
-### `POST /user`
+## Protected endpoints
 
-Register new user.
+Bearer authentication is required.
 
-| Parameter | Type   | Required |
-| --------- | ----   | -------- |
-| email     | string | true     |
-| password  | string | true     |
+### `GET /api/v1/calendars`
 
-Request:
-```
-{
-    "email": "stepan.bandera@peremoga.ua",
-    "password": "putinposhelnahui666"
-}
-```
+List calendars.
+
 Response:
 ```
 {
-    "id": "d739d9c0-a6a2-4096-8fb6-e113f2866355",
-    "email": "stepan.bandera@peremoga.ua"
+    "success": true,
+    "data": [
+        {
+            "id": "9d5ac1db-d2c6-4cc0-8c22-4a1900bf621b",
+            "name": "stepan.bandera@peremoga.ua calendar",
+            "color": "#c2e1c2",
+            "owner_id": "a687565b-bdfd-43fc-93ff-777663a23ab3"
+        }
+    ]
 }
 ```
