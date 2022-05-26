@@ -33,7 +33,7 @@ export class InMemoryCache implements Cache {
 
 let cache;
 
-export const getCache = () => {
+export const getCache = async () => {
     if (!cache) {
         cache = new InMemoryCache();
         return cache;

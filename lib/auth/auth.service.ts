@@ -49,10 +49,11 @@ export const authenticate = async (email: string, password: string) => {
 
     await tryVerifyPassword(user, password);
 
-    const readUser    = protectUser(user);
+    const readUser = protectUser(user);
     const accessToken = generateAccessToken(readUser);
+    const cache = await getCache();
 
-    getCache().set(makeAccessTokenCacheKey(readUser), accessToken, config.auth.access_token.ttl);
+    cache.set(makeAccessTokenCacheKey(readUser), accessToken, config.auth.access_token.ttl);
 
     return accessToken;
 };
@@ -61,8 +62,9 @@ export const authorise = async (accessToken: string) => {
     try {
         const payload = jwt.verify(accessToken, config.secret.key) as { data: ReadUserDto };
         const accessTokenKey = makeAccessTokenCacheKey(payload.data);
+        const cache = await getCache();
 
-        return getCache().exists(accessTokenKey);
+        return cache.exists(accessTokenKey);
     }
     catch (error) {
         return false;
