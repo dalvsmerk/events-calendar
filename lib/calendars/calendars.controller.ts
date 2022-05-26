@@ -1,3 +1,4 @@
+import Joi from 'joi';
 import { Controller } from '../types';
 import { CalendarReadDTO, getUserCalendars } from './calendars.service';
 
@@ -20,6 +21,26 @@ export default [
         },
         options: {
             description: 'List authorised user calendars',
+        },
+    },
+    {
+        visibility: 'protected',
+        method: 'post',
+        path: '/calendar/:calendar_id/event',
+        // handler: async (ctx) => {},
+        options: {
+            description: 'Create event for calendar',
+            validation: {
+                params: Joi.object({
+                    calendar_id: Joi.string().uuid().required(),
+                }),
+                payload: Joi.object({
+                    name: Joi.string().min(1).max(100).required(),
+                    start_date: Joi.date().required(),
+                    end_date: Joi.date().required(),
+                    calendar_id: Joi.string().uuid().required(),
+                }),
+            },
         },
     },
 ] as Controller[];
