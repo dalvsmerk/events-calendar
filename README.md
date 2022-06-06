@@ -18,7 +18,7 @@ Based on [a test task found on Github](https://github.com/fs/test-tasks/tree/mas
 ```shell
 npm ci
 npm run migrate
-npm start
+npm run watch
 ```
 
 ## Public endpoints
@@ -136,6 +136,40 @@ Create calendar event.
 | name           | string | true     |
 | start_date     | string | true     |
 | end_date       | string | true     |
+
+Request:
+```json
+{
+    "name": "Meeting",
+    "start_date": "2022-06-05T13:00:00.000Z",
+    "end_date": "2022-06-05T14:00:00.000Z"
+}
+```
+
+Response:
+```json
+{
+    "success": true,
+    "data": {
+        "id": "c3270065-3bb9-405d-ba2a-5403d97836dc",
+        "name": "Meeting",
+        "start_date": "2022-06-05T13:00:00.000Z",
+        "end_date": "2022-06-05T14:00:00.000Z",
+        "calendar_id": "211048f7-cec2-4739-b392-e383c2357ef7",
+        "owner_id": "ef4bcef1-b3bf-421a-bab5-5e1d1e51a0ec"
+    }
+}
+```
+
+### `PATCH /api/v1/events/:event_id`
+
+Update calendar event. Request must not be empty.
+
+| Body parameter | Type   | Required |
+| -------------- | ------ | -------- |
+| name           | string | false    |
+| start_date     | string | false    |
+| end_date       | string | false    |
 
 Request:
 ```json
