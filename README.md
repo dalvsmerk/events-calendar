@@ -10,14 +10,14 @@ Based on [a test task found on Github](https://github.com/fs/test-tasks/tree/mas
 ## Dependencies
 
 - `typescript`
+- `koa`
 - `knex`
-- `hapi`
 
 ## Development
 
 ```shell
-npm i
-npx knex migrate:latest
+npm ci
+npm run migrate
 npm start
 ```
 
@@ -29,20 +29,20 @@ No authentication is required.
 
 Register new user.
 
-| Parameter | Type   | Required |
-| --------- | ----   | -------- |
-| email     | string | true     |
-| password  | string | true     |
+| Body parameter | Type   | Required |
+| -------------- | ------ | -------- |
+| email          | string | true     |
+| password       | string | true     |
 
 Request:
-```
+```json
 {
     "email": "stepan.bandera@peremoga.ua",
     "password": "putinposhelnahui666"
 }
 ```
 Response:
-```
+```json
 {
     "success": true,
     "data": {
@@ -56,13 +56,13 @@ Response:
 
 Obtain authentication token.
 
-| Parameter | Type   | Required |
-| --------- | ----   | -------- |
-| email     | string | true     |
-| password  | string | true     |
+| Body parameter | Type   | Required |
+| -------------- | ------ | -------- |
+| email          | string | true     |
+| password       | string | true     |
 
 Request:
-```
+```json
 {
     "email": "stepan.bandera@peremoga.ua",
     "password": "putinposhelnahui666"
@@ -70,7 +70,7 @@ Request:
 ```
 
 Response:
-```
+```json
 {
     "success": true,
     "data": {
@@ -88,7 +88,7 @@ Bearer authentication is required.
 List calendars.
 
 Response:
-```
+```json
 {
     "success": true,
     "data": [
@@ -99,5 +99,64 @@ Response:
             "owner_id": "a687565b-bdfd-43fc-93ff-777663a23ab3"
         }
     ]
+}
+```
+
+### `GET /api/v1/events`
+
+List events by date interval.
+
+| Query parameter | Type   | Required |
+| --------------- | ------ | -------- |
+| from            | string | true     |
+| to              | string | true     |
+
+Response:
+```json
+{
+    "success": true,
+    "data": [
+        {
+            "id": "fa565e8c-146b-4ed5-bf14-c9a120c568a9",
+            "name": "My Calendar",
+            "start_date": "2022-06-01T13:00:00.000Z",
+            "end_date": "2022-06-02T13:00:00.000Z",
+            "calendar_id": "9d5ac1db-d2c6-4cc0-8c22-4a1900bf621b"
+        }
+    ]
+}
+```
+
+### `POST /api/v1/calendars/:calendar_id/event`
+
+Create calendar event.
+
+| Body parameter | Type   | Required |
+| -------------- | ------ | -------- |
+| name           | string | true     |
+| start_date     | string | true     |
+| end_date       | string | true     |
+
+Request:
+```json
+{
+    "name": "Meeting",
+    "start_date": "2022-06-05T13:00:00.000Z",
+    "end_date": "2022-06-05T14:00:00.000Z"
+}
+```
+
+Response:
+```json
+{
+    "success": true,
+    "data": {
+        "id": "c3270065-3bb9-405d-ba2a-5403d97836dc",
+        "name": "Meeting",
+        "start_date": "2022-06-05T13:00:00.000Z",
+        "end_date": "2022-06-05T14:00:00.000Z",
+        "calendar_id": "211048f7-cec2-4739-b392-e383c2357ef7",
+        "owner_id": "ef4bcef1-b3bf-421a-bab5-5e1d1e51a0ec"
+    }
 }
 ```

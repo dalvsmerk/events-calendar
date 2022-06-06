@@ -4,6 +4,7 @@ import { InternalError } from '../utils';
 import {
     findCalendarById,
     findCalendarsByOwnerId,
+    findUserCalendarEvents,
     insertCalendar,
     insertCalendarEvent,
 } from './calendars.repository';
@@ -14,6 +15,7 @@ export interface CalendarEvent {
     start_date: string;
     end_date: string;
     calendar_id: string;
+    owner_id: string;
 }
 
 export interface Calendar {
@@ -51,7 +53,7 @@ export type CalendarEventCreationDTO = {
     end_date: string;
 };
 
-export type CalendarEventReadDTO = Omit<CalendarEvent, 'id'>;
+export type CalendarEventReadDTO = CalendarEvent;
 
 export class CalendarNotFoundError extends Error {
     constructor(id: string) {
@@ -59,7 +61,11 @@ export class CalendarNotFoundError extends Error {
     }
 }
 
-export const createCalendarEvent = async (calendarId: string, eventDTO: CalendarEventCreationDTO) => {
+export const createCalendarEvent = async (
+    ownerId: string,
+    calendarId: string,
+    eventDTO: CalendarEventCreationDTO,
+): Promise<CalendarEventReadDTO> => {
     const calendar = await findCalendarById(calendarId);
 
     if (!calendar) {
@@ -69,6 +75,11 @@ export const createCalendarEvent = async (calendarId: string, eventDTO: Calendar
     return await insertCalendarEvent({
         id: v4(),
         calendar_id: calendarId,
+        owner_id: ownerId,
         ...eventDTO,
     });
 }
+
+export const getOwnerEvents = async (ownerId: string, from: string, to: string): Promise<CalendarEventReadDTO> => {
+    return findUserCalendarEvents(ownerId, from, to);
+};

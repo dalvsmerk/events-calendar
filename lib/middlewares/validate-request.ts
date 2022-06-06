@@ -1,24 +1,27 @@
-import { ValidationError } from 'joi';
+import { Schema, ValidationError } from 'joi';
 import { isEmpty } from 'lodash';
 import { RequestValidation } from '../types';
 
+const validate = (value: any, schema?: Schema) => {
+    if (!schema) return;
+
+    const result = schema.validate(value);
+
+    if (!isEmpty(result.error)) {
+        throw result.error;
+    }
+};
+
 export default (validation?: RequestValidation) => async (ctx, next) => {
+    if (!validation) {
+        await next();
+        return;
+    }
+
     try {
-        if (validation?.params) {
-            const result = validation.params.validate(ctx.request.params);
-
-            if (!isEmpty(result.error)) {
-                throw result.error;
-            }
-        }
-
-        if (validation?.payload) {
-            const result = validation.payload.validate(ctx.request.body);
-
-            if (!isEmpty(result.error)) {
-                throw result.error;
-            }
-        }
+        validate(ctx.request.query, validation.query);
+        validate(ctx.request.params, validation.params);
+        validate(ctx.request.body, validation.payload);
 
         await next();
     } catch (error) {

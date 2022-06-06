@@ -1,12 +1,15 @@
 import Joi from 'joi';
 import { Controller } from '../types';
-import { CalendarReadDTO, createCalendarEvent, getUserCalendars } from './calendars.service';
+import { CalendarReadDTO, createCalendarEvent, getOwnerEvents, getUserCalendars } from './calendars.service';
 
 export default [
     {
         visibility: 'protected',
         method: 'get',
         path: '/calendars',
+        options: {
+            description: 'List authorised user calendars',
+        },
         handler: async (ctx) => {
             try {
                 const calendars: CalendarReadDTO[] = await getUserCalendars(ctx.user.id);
@@ -19,26 +22,11 @@ export default [
                 ctx.error(500, error);
             }
         },
-        options: {
-            description: 'List authorised user calendars',
-        },
     },
     {
         visibility: 'protected',
         method: 'post',
-        path: '/calendar/:calendar_id/event',
-        handler: async (ctx) => {
-            try {
-                const event = await createCalendarEvent(ctx.params.calendar_id, ctx.request.body);
-
-                ctx.send(201, {
-                    success: true,
-                    data: event,
-                });
-            } catch (error) {
-                ctx.error(500, error);
-            }
-        },
+        path: '/calendars/:calendar_id/event',
         options: {
             description: 'Create event for calendar',
             validation: {
@@ -52,5 +40,48 @@ export default [
                 }),
             },
         },
+        handler: async (ctx) => {
+            try {
+                const {
+                    user: { id: userId },
+                    params: { calendar_id: calendarId },
+                    request: { body: eventCreationDTO },
+                } = ctx;
+                const event = await createCalendarEvent(userId, calendarId, eventCreationDTO);
+
+                ctx.send(201, {
+                    success: true,
+                    data: event,
+                });
+            } catch (error) {
+                ctx.error(500, error);
+            }
+        },
     },
+    {
+        visibility: 'protected',
+        method: 'get',
+        path: '/events',
+        options: {
+            description: 'List user events',
+            validation: {
+                query: Joi.object({
+                    from: Joi.string().isoDate().required(),
+                    to: Joi.string().isoDate().required(),
+                }),
+            },
+        },
+        handler: async (ctx) => {
+            try {
+                const { from, to } = ctx.request.query;
+
+                ctx.send(200, {
+                    success: true,
+                    data: await getOwnerEvents(ctx.user.id, from as string, to as string),
+                });
+            } catch (error) {
+                ctx.error(500, error);
+            }
+        }
+    }
 ] as Controller[];

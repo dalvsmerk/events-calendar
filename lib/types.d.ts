@@ -4,6 +4,7 @@ import { Context, Next } from 'koa';
 interface RequestValidation {
     params?: Schema;
     payload?: Schema;
+    query?: Schema;
 }
 
 interface Controller {
