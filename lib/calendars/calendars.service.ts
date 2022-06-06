@@ -1,7 +1,12 @@
 import { v4 } from 'uuid';
 import logger from '../clients/logger';
 import { InternalError } from '../utils';
-import { findCalendarById, findCalendarEvents, findCalendarsByOwnerId, insertCalendar, insertCalendarEvent } from './calendars.repository';
+import {
+    findCalendarById,
+    findCalendarsByOwnerId,
+    insertCalendar,
+    insertCalendarEvent,
+} from './calendars.repository';
 
 export interface CalendarEvent {
     id: string;
@@ -19,9 +24,7 @@ export interface Calendar {
 }
 
 export type CalendarCreationDTO = Omit<Calendar, 'id'>;
-export type CalendarReadDTO = Calendar & {
-    events: CalendarEvent[];
-};
+export type CalendarReadDTO = Calendar;
 
 export const createCalendar = async (dto: CalendarCreationDTO): Promise<CalendarReadDTO> => {
     try {
@@ -30,12 +33,7 @@ export const createCalendar = async (dto: CalendarCreationDTO): Promise<Calendar
             id: v4(),
         };
 
-        const calendar = await insertCalendar(calendarToCreate);
-
-        return {
-            ...calendar,
-            events: [],
-        };
+        return await insertCalendar(calendarToCreate);
     } catch (error) {
         logger.error(error);
 
@@ -43,26 +41,8 @@ export const createCalendar = async (dto: CalendarCreationDTO): Promise<Calendar
     }
 };
 
-export const getEventsForCalendar = async (calendar: Calendar): Promise<CalendarReadDTO> => {
-    const events = await findCalendarEvents(calendar.id);
-
-    return {
-        ...calendar,
-        events,
-    };
-}
-
 export const getUserCalendars = async (userId: string): Promise<CalendarReadDTO[]> => {
-    try {
-        const calendars: Calendar[] = await findCalendarsByOwnerId(userId);
-        const calendarsWithEvents = await Promise.all(calendars.map(getEventsForCalendar));
-
-        return calendarsWithEvents;
-    } catch (error) {
-        logger.error(error);
-
-        throw new InternalError((error as Error).message);
-    }
+    return await findCalendarsByOwnerId(userId);
 };
 
 export type CalendarEventCreationDTO = {

@@ -9,7 +9,4 @@ export const findCalendarsByOwnerId = async (ownerId: string): Promise<Calendar[
 export const findCalendarById = async (id: string): Promise<Calendar> =>
     db('calendars').select().where('id', id).first().then();
 
-export const findCalendarEvents = async (calendarId: string): Promise<CalendarEvent[]> =>
-    db('events').select().where('calendar_id', calendarId).then();
-
 export const insertCalendarEvent = insert<CalendarEvent>('events');
